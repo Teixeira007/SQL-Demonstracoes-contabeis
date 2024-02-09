@@ -64,6 +64,25 @@ Os dados financeiros importados têm valores numéricos com vírgula como separa
 ## Análises Financeiras
 O script realiza duas consultas SQL para identificar as 10 operadoras com maiores despesas na categoria 'EVENTOS/ SINISTROS CONHECIDOS OU AVISADOS DE ASSISTÊNCIA A SAÚDE MEDICO HOSPITALAR' nos últimos trimestre e ano, respectivamente.
 
+```sql
+SELECT OA.RAZAO_SOCIAL, SUM(DC.VALOR_SALDO_FINAL)
+FROM DEMONSTRACOES_CONTABEIS DC
+INNER JOIN OPERADORAS_ATIVAS OA ON OA.REGISTRO_ANS = DC.REG_ANS
+WHERE DC.DESCRICAO = 'EVENTOS/ SINISTROS CONHECIDOS OU AVISADOS  DE ASSISTÊNCIA A SAÚDE MEDICO HOSPITALAR '
+	AND DC.DATA_REFERENCIA BETWEEN '2023-10-01' AND '2023-12-31'
+GROUP BY OA.RAZAO_SOCIAL
+ORDER BY SUM(DC.VALOR_SALDO_FINAL) DESC
+LIMIT 10;
+```
+- Propósito: Retorna as 10 operadoras com as maiores despesas no último trimestre, relacionadas à categoria específica de "EVENTOS/ SINISTROS CONHECIDOS OU AVISADOS DE ASSISTÊNCIA A SAÚDE MEDICO HOSPITALAR".
+- Detalhes: Utiliza a tabela DEMONSTRACOES_CONTABEIS para obter informações contábeis e OPERADORAS_ATIVAS para obter detalhes da operadora.
+- Filtros: Filtra os dados para incluir apenas a categoria específica ("EVENTOS/ SINISTROS CONHECIDOS OU AVISADOS DE ASSISTÊNCIA A SAÚDE MEDICO HOSPITALAR") e para o último trimestre de 2023.
+- GROUP BY OA.RAZAO_SOCIAL: Agrupa os resultados por operadora.
+- SUM(DC.VALOR_SALDO_FINAL):  Utiliza a função de agregação SUM para somar os valores da coluna VALOR_SALDO_FINAL para cada operadora, representando assim as despesas no período.
+- ORDER BY SUM(DC.VALOR_SALDO_FINAL) DESC: Ordena os resultados em ordem decrescente com base no total de despesas SUM(DC.VALOR_SALDO_FINAL) O DESC indica a ordem decrescente.
+- LIMIT 10: Limita os resultados às 10 primeiras operadoras.
+
+  A segunda query é similar a primeira muda apenas o periodo da filtragem, pega as despesas do ultimo ano 
 ## Execução do Script
 1. Execute o script SQL no seu ambiente PostgreSQL.
 2. Certifique-se de que os arquivos CSV estão localizados no caminho especificado no script.
